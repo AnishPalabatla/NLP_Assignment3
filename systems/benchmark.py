@@ -169,21 +169,21 @@ def run_benchmark(
                 with autocast_ctx():
                     logits = model(x)
                     loss = cross_entropy(logits.float(), y)
-        sync(device)
+            sync(device)
         t1 = timeit.default_timer()
 
         # ---- backward ----
         if mode != "forward":
             with nvtx_range("backward", nvtx):
                 loss.backward()
-            sync(device)
+                sync(device)
         t2 = timeit.default_timer()
 
         # ---- optimizer ----
         if mode == "train":
             with nvtx_range("optimizer step", nvtx):
                 optimizer.step()
-            sync(device)
+                sync(device)
         t3 = timeit.default_timer()
 
         # Clear grads outside of the timed regions.
